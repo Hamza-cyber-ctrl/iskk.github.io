@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f7f7f7;
+        color: #222;
+    }
+    .header {
+        background: #222;
+        color: #fff;
+        padding: 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 70px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    .brand {
+        font-size: 2.2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: #ff5a36;
+    }
+    .nav {
+        display: flex;
+        gap: 30px;
+    }
+    .nav a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .nav a:hover {
+        color: #ff5a36;
+    }
+    .cart-icon {
+        position: relative;
+        cursor: pointer;
+        margin-left: 20px;
+    }
+    .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: #ff5a36;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.9rem;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .main-photo {
+        width: 100%;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .section-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 40px 0 20px 0;
+        text-align: center;
+        color: #222;
+        letter-spacing: 1px;
+    }
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 30px;
+        padding: 0 40px 40px 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .product-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: box-shadow 0.2s;
+        position: relative;
+    }
+    .product-card:hover {
+        box-shadow: 0 6px 24px rgba(255,90,54,0.13);
+    }
+    .product-img {
+        width: 160px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        background: #eee;
+    }
+    .product-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        text-align: center;
+    }
+    .product-price {
+        color: #ff5a36;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+    .product-size {
+        margin-bottom: 10px;
+    }
+    .product-size select {
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+    .product-amount {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .product-amount input[type="number"] {
+        width: 50px;
+        padding: 4px 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        text-align: center;
+    }
+    .add-cart-btn {
+        background: #ff5a36;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 22px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 8px;
+    }
+    .add-cart-btn:hover {
+        background: #e14a25;
+    }
+    .cart-popup-bg {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    .cart-popup {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 6px 32px rgba(0,0,0,0.18);
+        padding: 32px 28px 24px 28px;
+        min-width: 340px;
+        max-width: 95vw;
+        position: relative;
+        animation: popupIn 0.2s;
+    }
+    @keyframes popupIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    .cart-popup h2 {
+        margin-top: 0;
+        font-size: 1.4rem;
+        color: #ff5a36;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+    .cart-items-list {
+        max-height: 220px;
+        overflow-y: auto;
+        margin-bottom: 18px;
+    }
+    .cart-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+    }
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+    .cart-item-info {
+        flex: 1;
+    }
+    .cart-item-name {
+        font-weight: 500;
+        font-size: 1rem;
+    }
+    .cart-item-size {
+        font-size: 0.95rem;
+        color: #666;
+    }
+    .cart-item-qty {
+        font-size: 0.95rem;
+        color: #666;
+    }
+    .cart-item-amount {
+        font-size: 0.95rem;
+        color: #666;
+    }
+    .cart-item-remove {
+        background: none;
+        border: none;
+        color: #ff5a36;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    .cart-total {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: right;
+        margin-bottom: 18px;
+    }
+    .cart-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    .cart-actions button {
+        flex: 1;
+        padding: 10px 0;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .cart-cancel-btn {
+        background: #eee;
+        color: #222;
+    }
+    .cart-cancel-btn:hover {
+        background: #ddd;
+    }
+    .cart-purchase-btn {
+        background: #ff5a36;
+        color: #fff;
+    }
+    .cart-purchase-btn:hover {
+        background: #e14a25;
+    }
+    .location-input {
+        margin-bottom: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .location-input label {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .location-input input {
+        padding: 7px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+    @media (max-width: 700px) {
+        .header, .products-grid {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .main-photo {
+            max-height: 180px;
+        }
+        .cart-popup {
+            min-width: 90vw;
+            padding: 18px 6vw 18px 6vw;
+        }
+    }
+</style>
+
+<div class="header">
+    <span class="brand" onclick="showHome()">Afkar</span>
+    <nav class="nav">
+        <a href="#" onclick="showHome();return false;">Home</a>
+        <a href="#" onclick="showLanding();return false;">Shop</a>
+    </nav>
+    <div class="cart-icon" onclick="openCart()">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff5a36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+    </div>
+</div>
+
+<div id="homeScreen" style="display:block;">
+    <img class="main-photo" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="Afkar Store Main Photo">
+    <div class="section-title">Welcome to Afkar</div>
+    <div style="text-align:center; max-width:700px; margin:0 auto 30px auto; font-size:1.15rem; color:#444;">
+        Discover the latest trends in fashion at Afkar. Shop from a wide range of stylish clothes for all sizes and occasions. Enjoy a seamless shopping experience and fast delivery to your location!
+    </div>
+</div>
+
+<div id="landingScreen" style="display:none;">
+    <div class="section-title">Shop Our Collection</div>
+    <div class="products-grid" id="productsGrid">
+        <!-- Products will be rendered here -->
+    </div>
+</div>
+
+<!-- Cart Popup -->
+<div id="cartPopupBg" class="cart-popup-bg" style="display:none;">
+    <div class="cart-popup">
+        <h2>Your Cart</h2>
+        <div class="cart-items-list" id="cartItemsList"></div>
+        <div class="cart-total" id="cartTotal"></div>
+        <div class="location-input">
+            <label for="locationInput">Your Location</label>
+            <input type="text" id="locationInput" placeholder="Enter your address or location">
+        </div>
+        <div class="cart-actions">
+            <button class="cart-cancel-btn" onclick="cancelOrder()">Cancel Order</button>
+            <button class="cart-purchase-btn" onclick="purchaseOrder()">Purchase</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const PRODUCTS = [
+    {
+        id: 1,
+        name: "Classic White T-Shirt",
+        price: 19.99,
+        img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
+        sizes: ["S", "M", "L", "XL"]
+    },
+    {
+        id: 2,
+        name: "Denim Jacket",
+        price: 49.99,
+        img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+        sizes: ["S", "M", "L", "XL"]
+    },
+    {
+        id: 3,
+        name: "Summer Dress",
+        price: 34.99,
+        img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80",
+        sizes: ["XS", "S", "M", "L"]
+    },
+    {
+        id: 4,
+        name: "Black Hoodie",
+        price: 29.99,
+        img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80",
+        sizes: ["S", "M", "L", "XL"]
+    },
+    {
+        id: 5,
+        name: "Slim Fit Jeans",
+        price: 39.99,
+        img: "https://images.unsplash.com/photo-1469398715555-76331a6c7b29?auto=format&fit=crop&w=400&q=80",
+        sizes: ["28", "30", "32", "34", "36"]
+    },
+    {
+        id: 6,
+        name: "Red Flannel Shirt",
+        price: 24.99,
+        img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
+        sizes: ["S", "M", "L", "XL"]
+    },
+    {
+        id: 7,
+        name: "Sport Shorts",
+        price: 17.99,
+        img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+        sizes: ["S", "M", "L", "XL"]
+    },
+    {
+        id: 8,
+        name: "Elegant Blouse",
+        price: 27.99,
+        img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80",
+        sizes: ["XS", "S", "M", "L"]
+    },
+    {
+        id: 9,
+        name: "Cargo Pants",
+        price: 44.99,
+        img: "https://images.unsplash.com/photo-1469398715555-76331a6c7b29?auto=format&fit=crop&w=400&q=80",
+        sizes: ["30", "32", "34", "36", "38"]
+    },
+    {
+        id: 10,
+        name: "Blue Polo Shirt",
+        price: 22.99,
+        img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80",
+        sizes: ["S", "M", "L", "XL"]
+    }
+];
+
+let cart = [];
+
+function showHome() {
+    document.getElementById('homeScreen').style.display = 'block';
+    document.getElementById('landingScreen').style.display = 'none';
+}
+function showLanding() {
+    document.getElementById('homeScreen').style.display = 'none';
+    document.getElementById('landingScreen').style.display = 'block';
+}
+function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '';
+    PRODUCTS.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img class="product-img" src="${product.img}" alt="${product.name}">
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">$${product.price.toFixed(2)}</div>
+            <div class="product-size">
+                <select id="sizeSelect_${product.id}">
+                    ${product.sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
+                </select>
+            </div>
+            <div class="product-amount">
+                <label for="amountInput_${product.id}" style="font-size:0.98rem;">Amount:</label>
+                <input type="number" id="amountInput_${product.id}" min="1" value="1">
+            </div>
+            <button class="add-cart-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+        `;
+        grid.appendChild(card);
+    });
+}
+function addToCart(productId) {
+    const product = PRODUCTS.find(p => p.id === productId);
+    const sizeSelect = document.getElementById(`sizeSelect_${productId}`);
+    const size = sizeSelect.value;
+    const amountInput = document.getElementById(`amountInput_${productId}`);
+    let amount = parseInt(amountInput.value, 10);
+    if (isNaN(amount) || amount < 1) amount = 1;
+    // Check if already in cart with same size
+    const existing = cart.find(item => item.product.id === productId && item.size === size);
+    if (existing) {
+        existing.qty += amount;
+    } else {
+        cart.push({ product, size, qty: amount });
+    }
+    updateCartCount();
+}
+function updateCartCount() {
+    document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+}
+function openCart() {
+    renderCart();
+    document.getElementById('cartPopupBg').style.display = 'flex';
+}
+function closeCart() {
+    document.getElementById('cartPopupBg').style.display = 'none';
+}
+function renderCart() {
+    const list = document.getElementById('cartItemsList');
+    list.innerHTML = '';
+    if (cart.length === 0) {
+        list.innerHTML = '<div style="text-align:center; color:#888;">Your cart is empty.</div>';
+    } else {
+        cart.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.innerHTML = `
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${item.product.name}</div>
+                    <div class="cart-item-size">Size: ${item.size}</div>
+                    <div class="cart-item-amount">Amount: ${item.qty}</div>
+                    <div class="cart-item-qty">Subtotal: $${(item.product.price * item.qty).toFixed(2)}</div>
+                </div>
+                <button class="cart-item-remove" onclick="removeCartItem(${idx})">Remove</button>
+            `;
+            list.appendChild(div);
+        });
+    }
+    document.getElementById('cartTotal').textContent = "Total: $" + cart.reduce((sum, item) => sum + item.product.price * item.qty, 0).toFixed(2);
+    document.getElementById('locationInput').value = localStorage.getItem('afkar_location') || '';
+}
+function removeCartItem(idx) {
+    cart.splice(idx, 1);
+    updateCartCount();
+    renderCart();
+}
+function cancelOrder() {
+    if (confirm("Are you sure you want to cancel your order?")) {
+        cart = [];
+        updateCartCount();
+        closeCart();
+    }
+}
+function purchaseOrder() {
+    const location = document.getElementById('locationInput').value.trim();
+    if (!location) {
+        alert("Please enter your location.");
+        return;
+    }
+    if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+    }
+    localStorage.setItem('afkar_location', location);
+    const order = {
+        items: cart.map(item => ({
+            name: item.product.name,
+            size: item.size,
+            qty: item.qty,
+            price: item.product.price
+        })),
+        location,
+        total: cart.reduce((sum, item) => sum + item.product.price * item.qty, 0),
+        time: new Date().toLocaleString()
+    };
+    // Save to localStorage for record (no admin)
+    let storedOrders = JSON.parse(localStorage.getItem('afkar_orders') || '[]');
+    storedOrders.push(order);
+    localStorage.setItem('afkar_orders', JSON.stringify(storedOrders));
+    cart = [];
+    updateCartCount();
+    closeCart();
+    alert("Your order has been sent! Thank you for shopping at Afkar.");
+}
+window.onload = function() {
+    renderProducts();
+    updateCartCount();
+};
+</script>
+</body>
+</html>

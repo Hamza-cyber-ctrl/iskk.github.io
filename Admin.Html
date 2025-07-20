@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, sans-serif;
+        background: #f4f6fb;
+        color: #23272f;
+    }
+    .admin-header {
+        background: #fff;
+        color: #23272f;
+        padding: 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(44,62,80,0.04);
+    }
+    .admin-brand {
+        font-size: 2.1rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #ff5a36;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .admin-brand::before {
+        content: '';
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background: url('https://img.icons8.com/ios-filled/50/ff5a36/shop.png') no-repeat center/contain;
+        vertical-align: middle;
+    }
+    .admin-main {
+        max-width: 980px;
+        margin: 48px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 32px rgba(44,62,80,0.09);
+        padding: 40px 48px 48px 48px;
+        min-height: 500px;
+        position: relative;
+    }
+    .admin-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 28px;
+        color: #23272f;
+        letter-spacing: 0.5px;
+    }
+    .orders-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        margin-top: 10px;
+    }
+    .orders-table th, .orders-table td {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 1.05rem;
+        background: #f8fafc;
+        border: none;
+    }
+    .orders-table th {
+        background: #f1f3f7;
+        color: #23272f;
+        font-weight: 600;
+        border-bottom: 2px solid #e5e9f2;
+    }
+    .orders-table tr {
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(44,62,80,0.03);
+    }
+    .orders-table tr:not(:first-child):hover td {
+        background: #f0f6ff;
+        transition: background 0.2s;
+    }
+    .order-items-list {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 0.99rem;
+        color: #3a3f4b;
+    }
+    .order-items-list li {
+        margin-bottom: 2px;
+    }
+    .clear-orders-btn {
+        background: linear-gradient(90deg, #ff5a36 0%, #ff8c36 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 28px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 32px;
+        box-shadow: 0 2px 8px rgba(255,90,54,0.08);
+        transition: background 0.18s, box-shadow 0.18s;
+        float: right;
+    }
+    .clear-orders-btn:hover {
+        background: linear-gradient(90deg, #e14a2b 0%, #ff8c36 100%);
+        box-shadow: 0 4px 16px rgba(255,90,54,0.13);
+    }
+    .empty-orders {
+        color: #b0b6c3;
+        text-align: center;
+        margin: 60px 0 40px 0;
+        font-size: 1.25rem;
+        letter-spacing: 0.2px;
+        font-weight: 500;
+    }
+    .order-time {
+        font-size: 0.98rem;
+        color: #7a7f8c;
+        font-weight: 500;
+    }
+    .order-location {
+        font-size: 1.01rem;
+        color: #23272f;
+        font-weight: 500;
+    }
+    .order-total {
+        font-size: 1.08rem;
+        color: #ff5a36;
+        font-weight: 700;
+    }
+    .order-index {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ff5a36;
+    }
+    @media (max-width: 900px) {
+        .admin-main {
+            padding: 18px 6px 24px 6px;
+        }
+        .orders-table th, .orders-table td {
+            font-size: 0.97rem;
+            padding: 10px 6px;
+        }
+    }
+    @media (max-width: 600px) {
+        .admin-header {
+            padding: 0 10px;
+        }
+        .admin-main {
+            padding: 8px 2px 18px 2px;
+        }
+        .admin-title {
+            font-size: 1.3rem;
+        }
+        .clear-orders-btn {
+            width: 100%;
+            float: none;
+            margin-top: 18px;
+        }
+    }
+</style>
+<div class="admin-header">
+    <div class="admin-brand">Afkar Admin</div>
+    <div style="font-size:1.13rem; color:#ff5a36; font-weight:600; letter-spacing:0.5px;">Order Management</div>
+</div>
+<div class="admin-main">
+    <div class="admin-title">Orders</div>
+    <div id="ordersContainer"></div>
+    <button class="clear-orders-btn" onclick="clearAllOrders()">Clear All Orders</button>
+</div>
+<script>
+function renderOrders() {
+    const orders = JSON.parse(localStorage.getItem('afkar_orders') || '[]');
+    const container = document.getElementById('ordersContainer');
+    if (orders.length === 0) {
+        container.innerHTML = '<div class="empty-orders"><svg width="48" height="48" fill="none" style="vertical-align:middle;opacity:0.5;margin-bottom:8px;" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2v9c0 1.1-.9 2-2 2H7zm0 0v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1" stroke="#b0b6c3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><br>No orders found.</div>';
+        return;
+    }
+    let html = '<table class="orders-table">';
+    html += `
+        <tr>
+            <th style="width:40px;">#</th>
+            <th style="min-width:120px;">Time</th>
+            <th style="min-width:120px;">Location</th>
+            <th>Items</th>
+            <th style="min-width:80px;">Total</th>
+        </tr>
+    `;
+    orders.forEach((order, idx) => {
+        html += `
+            <tr>
+                <td class="order-index">${idx + 1}</td>
+                <td>
+                    <span class="order-time">${order.time || ''}</span>
+                </td>
+                <td>
+                    <span class="order-location">${order.location || ''}</span>
+                </td>
+                <td>
+                    <ul class="order-items-list">
+                        ${order.items.map(item => `
+                            <li>
+                                <b>${item.name}</b> 
+                                <span style="color:#7a7f8c;">(Size: ${item.size}, Qty: ${item.qty}, $${item.price.toFixed(2)} each)</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </td>
+                <td class="order-total">$${order.total ? order.total.toFixed(2) : '0.00'}</td>
+            </tr>
+        `;
+    });
+    html += '</table>';
+    container.innerHTML = html;
+}
+function clearAllOrders() {
+    if (confirm("Are you sure you want to clear all orders? This cannot be undone.")) {
+        localStorage.removeItem('afkar_orders');
+        renderOrders();
+    }
+}
+window.onload = function() {
+    renderOrders();
+};
+</script>
+</body>
+</html>
